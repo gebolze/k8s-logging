@@ -12,6 +12,7 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=90s
 
+# setup elk stack
 kubectl apply -f elk-logging-ns.yaml
 
 kubectl apply -f elk-logging-elasticsearch.yaml
@@ -25,6 +26,7 @@ kubectl rollout status deployment/logstash --namespace=elk-logging
 
 kubectl apply -f elk-logging-ingress.yaml
 
+# setup logs collection using fluent-bit
 kubectl apply -f kube-logging-ns.yaml
 kubectl apply -f kube-logging-fluentbit.yaml
 kubectl rollout status daemonset/fluent-bit -n kube-logging
