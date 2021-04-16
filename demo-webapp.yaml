@@ -11,8 +11,6 @@ spec:
     metadata:
       labels:
         app: demo-webapp
-      annotations:
-        fluentbit.io/parser: dockerCustom
     spec:
       containers:
       - name: webapp

@@ -26,9 +26,12 @@ data:
       }
     }
     output {
-      elasticsearch {
-        hosts => ["elasticsearch:9200"]
+      stdout {
+        codec => rubydebug
       }
+      #elasticsearch {
+      #  hosts => ["elasticsearch:9200"]
+      #}
     }
 ---
 apiVersion: apps/v1

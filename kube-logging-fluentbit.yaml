@@ -54,7 +54,7 @@ data:
         Name              tail
         Tag               kube.*
         Path              /var/log/containers/*.log
-        Parser            dockerCustom
+        Parser            cri
         DB                /var/log/flb_kube.db
         Mem_Buf_Limit     5MB
         Skip_Long_Lines   Off
@@ -70,49 +70,57 @@ data:
         Name                kubernetes
         Match               kube.*
         Kube_URL            https://kubernetes.default.svc.cluster.local:443
-        Keep_Log            Off
         Merge_Log           On
         Merge_Log_Trim      On
+        Keep_Log            Off
         K8S-Logging.Parser  On
         K8S-Logging.Exclude On
+        Annotations         Off
+        Labels              On
 
   outputs.conf: |
-     [OUTPUT]
-        Name         http
-        InstanceName fluentbit-http-sink
-        Match        *_default_*
-        Match        *
-        Format       json
-        Header       TestHeader TestValue
-        Host         ${FLUENT_LOGSTASH_HOST}
-        Port         ${FLUENT_LOGSTASH_PORT}
-        header_tag   FLUENT-TAG
+      [OUTPUT]
+         Name     stdout
+         Match    kube.var.log.containers.demo*
 
-     [OUTPUT]
-        Name  es
-        Match *
-        Host ${FLUENT_ELASTIC_HOST}
-        Port ${FLUENT_ELASTIC_PORT}
-        Index fluent_bit
+      [OUTPUT]
+         Name         http
+         Match        *_default_*
+         Match        *
+         Format       json
+         Header       TestHeader TestValue
+         Host         ${FLUENT_LOGSTASH_HOST}
+         Port         ${FLUENT_LOGSTASH_PORT}
+         header_tag   FLUENT-TAG
+
+      [OUTPUT]
+         Name  es
+         Match *
+         Host ${FLUENT_ELASTIC_HOST}
+         Port ${FLUENT_ELASTIC_PORT}
+         Index fluent_bit
 
   parsers.conf: |
     [PARSER]
-        Name        dockerCustom
-        Format      regex
-        Regex       ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]+) (?<log>.*)$
+        Name        json
+        Format      json
         Time_Key    time
-        Time_Format %Y-%m-%dT%H:%M:%S.%L
-        Decode_Field log
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+        Time_Keep   Off
 
     [PARSER]
         Name        docker
         Format      json
         Time_Key    time
         Time_Format %Y-%m-%dT%H:%M:%S.%L
-        Time_Keep   On
-        # Command      |  Decoder | Field | Optional Action
-        # =============|==================|=================
-        Decode_Field_As   escaped    log
+        Time_Keep   Off
+
+    [PARSER]
+        Name        cri
+        Format      regex
+        Regex       ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]+) (?<log>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -132,7 +140,7 @@ spec:
     spec:
       containers:
       - name: fluent-bit
-        image: fluent/fluent-bit:1.3.8
+        image: fluent/fluent-bit:1.7
         imagePullPolicy: Always
         env:
         - name: FLUENT_LOGSTASH_HOST
