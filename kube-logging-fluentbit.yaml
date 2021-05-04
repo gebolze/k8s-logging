@@ -78,6 +78,11 @@ data:
         Annotations         Off
         Labels              On
 
+    [FILTER]
+        Name modify
+        Match *
+        Rename log message
+
   outputs.conf: |
       [OUTPUT]
          Name     stdout
@@ -85,20 +90,12 @@ data:
 
       [OUTPUT]
          Name         http
-         Match        *_default_*
          Match        *
          Format       json
          Header       TestHeader TestValue
          Host         ${FLUENT_LOGSTASH_HOST}
          Port         ${FLUENT_LOGSTASH_PORT}
          header_tag   FLUENT-TAG
-
-      [OUTPUT]
-         Name  es
-         Match *
-         Host ${FLUENT_ELASTIC_HOST}
-         Port ${FLUENT_ELASTIC_PORT}
-         Index fluent_bit
 
   parsers.conf: |
     [PARSER]
@@ -147,10 +144,6 @@ spec:
           value: "logstash.elk-logging.svc.cluster.local"
         - name: FLUENT_LOGSTASH_PORT
           value: "30000"
-        - name: FLUENT_ELASTIC_PORT
-          value: "9200"
-        - name: FLUENT_ELASTIC_HOST
-          value: "elasticsearch.elk-logging.svc.cluster.local"
         volumeMounts:
         - name: varlog
           mountPath: /var/log

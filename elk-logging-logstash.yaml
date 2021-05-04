@@ -22,17 +22,95 @@ data:
       http {
         type => "dotnet"
         port => 30000
-        codec => plain
+        codec => json
       }
     }
     output {
       stdout {
         codec => rubydebug
       }
-      #elasticsearch {
-      #  hosts => ["elasticsearch:9200"]
-      #}
+      elasticsearch {
+        hosts => ["elasticsearch:9200"]
+        index => "ecs-%{+YYYY.MM.dd}"
+        manage_template => true
+        template => "/template/my-ecs.json"
+        template_name => "my_ecs"
+        template_overwrite => true
+      }
     }
+  my-ecs.json: |
+    {
+      "index_patterns": [
+        "ecs-*"
+      ],
+      "settings" : {
+        "index": {
+          "mapping": {
+            "total_fields": {
+              "limit": 10000
+            }
+          },
+          "refresh_interval": "5s"
+        }
+      },
+      "mappings": {
+        "_meta": {
+          "version": "1.5.0"
+        },
+        "date_detection": false,
+        "dynamic_templates" : [
+          {
+            "strings_as_keyword": {
+              "mapping": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "match_mapping_type": "string"
+            }
+          }
+        ],
+        "properties" : {
+          "@timestamp" : { "type" : "date" },
+          "@version" : { "type" : "keyword" },
+          "cluster_name" : { "type" : "keyword" },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "event": {
+            properties: {
+              "created": {
+                "type": "date"
+              },
+              "severity": {
+                "type": "long"
+              },
+              "timezone": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "log" : {
+            "properties": {
+              "level": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "logger": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    }
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -68,6 +146,8 @@ spec:
         volumeMounts:
         - name: pipeline-config
           mountPath: /usr/share/logstash/pipeline/
+        - name: template
+          mountPath: /template/
       volumes:
         - name: pipeline-config
           configMap:
@@ -75,3 +155,9 @@ spec:
             items:
               - key: logstash.conf
                 path: logstash.conf
+        - name: template
+          configMap:
+            name: logstash-pipeline
+            items:
+              - key: my-ecs.json
+                path: my-ecs.json

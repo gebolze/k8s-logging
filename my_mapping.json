@@ -1,0 +1,360 @@
+{
+  "index_patterns": [
+    "ecs-*"
+  ],
+  "settings" : {
+    "index": {
+      "mapping": {
+        "total_fields": {
+          "limit": 10000
+        }
+      },
+      "refresh_interval": "5s"
+    }
+  },
+  "mappings": {
+    "_meta": {
+      "version": "1.5.0"
+    },
+    "date_detection": false,
+    "dynamic_templates" : [
+      {
+        "strings_as_keyword": {
+          "mapping": {
+            "ignore_above": 1024,
+            "type": "keyword"
+          },
+          "match_mapping_type": "string"
+        }
+      }
+    ],
+    "properties" : {
+      "@timestamp" : { "type" : "date" },
+      "@version" : { "type" : "keyword" },
+      "cluster_name" : { 
+        "type" : "text",
+        "norms" : false,
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 64
+          }
+        }
+      },
+      "date" : {
+        "type" : "float"
+      },
+      "geoip" : {
+        "dynamic" : "true",
+        "properties" : {
+          "ip" : {
+            "type" : "ip"
+          },
+          "latitude" : {
+            "type" : "half_float"
+          },
+          "location" : {
+            "type" : "geo_point"
+          },
+          "longitude" : {
+            "type" : "half_float"
+          }
+        }
+      },
+      "headers" : {
+        "properties" : {
+          "content_length" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "content_type" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "fluent_tag" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "http_host" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "http_user_agent" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "http_version" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "request_method" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "request_path" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "testheader" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      },
+      "host" : {
+        "type" : "text",
+        "norms" : false,
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "kubernetes" : {
+        "properties" : {
+          "container_hash" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "container_image" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "container_name" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "docker_id" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "host" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "labels" : {
+            "properties" : {
+              "app" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "component" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "controller-revision-hash" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "k8s-app" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "pod-template-generation" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "tier" : {
+                "type" : "text",
+                "norms" : false,
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              }
+            }
+          },
+          "namespace_name" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "pod_id" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "pod_name" : {
+            "type" : "text",
+            "norms" : false,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      },
+      "log" : {
+        "properties": {
+          "level": {
+            "ignore_above": 1024,
+            "type": "keyword"
+          },
+          "logger": {
+            "ignore_above": 1024,
+            "type": "keyword"
+          }
+        }
+      },
+      "logtag" : {
+        "type" : "text",
+        "norms" : false,
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "stream" : {
+        "type" : "text",
+        "norms" : false,
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "type" : {
+        "type" : "text",
+        "norms" : false,
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      }
+    }
+  }
+}
