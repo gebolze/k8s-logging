@@ -29,9 +29,6 @@ kubectl rollout status sts/es-cluster --namespace=elk-logging
 kubectl apply -f elk-logging-kibana.yaml
 kubectl rollout status deployment/kibana --namespace=elk-logging
 
-echo "please apply the template now"
-kubectl port-forward -n elk-logging service/elasticsearch 9200
-
 kubectl apply -f elk-logging-logstash.yaml
 kubectl rollout status deployment/logstash --namespace=elk-logging
 
