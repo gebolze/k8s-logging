@@ -437,7 +437,7 @@ spec:
     spec:
       containers:
       - name: logstash
-        image: docker.elastic.co/logstash/logstash:7.2.0
+        image: docker.elastic.co/logstash/logstash:7.10.2
         resources:
           limits:
             cpu: 1000m

@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
         resources:
           limits:
             cpu: 1000m
@@ -59,7 +59,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
           - name: discovery.seed_hosts
-            value: "es-cluster-0.elasticsearch,es-cluster-1.elasticsearch,es-cluster-2.elasticsearch"
+            value: "es-cluster-0.elasticsearch.elk-logging,es-cluster-1.elasticsearch.elk-logging,es-cluster-2.elasticsearch.elk-logging"
           - name: cluster.initial_master_nodes
             value: "es-cluster-0,es-cluster-1,es-cluster-2"
           - name: ES_JAVA_OPTS
