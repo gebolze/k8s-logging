@@ -15,6 +15,7 @@ spec:
       containers:
       - name: webapp
         image: gebolze/demo-webapp
+        args: ["--loggermode", "ECS"]
 #        livenessProbe:
 #          httpGet:
 #            scheme: HTTP
