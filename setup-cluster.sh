@@ -26,18 +26,18 @@ echo "------------------------------------------------------------------------"
 echo "Setup elk stack"
 echo "------------------------------------------------------------------------"
 
-kubectl apply -f elk-logging-ns.yaml
+kubectl apply -f ./elk-logging/namespace.yaml
 
-kubectl apply -f elk-logging-elasticsearch.yaml
+kubectl apply -f ./elk-logging/elasticsearch.yaml
 kubectl rollout status sts/es-cluster --namespace=elk-logging
 
-kubectl apply -f elk-logging-kibana.yaml
+kubectl apply -f ./elk-logging/kibana.yaml
 kubectl rollout status deployment/kibana --namespace=elk-logging
 
-kubectl apply -f elk-logging-logstash.yaml
+kubectl apply -f ./elk-logging/logstash.yaml
 kubectl rollout status deployment/logstash --namespace=elk-logging
 
-kubectl apply -f elk-logging-ingress.yaml
+kubectl apply -f ./elk-logging/ingress.yaml
 
 echo "------------------------------------------------------------------------"
 echo "setup logs collection using fluent-bit"
