@@ -16,20 +16,24 @@ spec:
       - name: webapp
         image: gebolze/demo-webapp
         args: ["--loggermode", "ECS"]
-#        livenessProbe:
-#          httpGet:
-#            scheme: HTTP
-#            path: /test/
-#            port: 8000
-#          initialDelaySeconds: 30
-#          periodSeconds: 10
-#        readinessProbe:
-#          httpGet:
-#            scheme: HTTP
-#            path: /test/
-#            port: 8000
-#          initialDelaySeconds: 30
-#          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /health/startup
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
         volumeMounts:
         - name: varlog
           mountPath: /var/log

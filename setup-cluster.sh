@@ -43,8 +43,8 @@ echo "------------------------------------------------------------------------"
 echo "setup logs collection using fluent-bit"
 echo "------------------------------------------------------------------------"
 
-kubectl apply -f kube-logging-ns.yaml
-kubectl apply -f kube-logging-fluentbit.yaml
+kubectl apply -f ./kube-logging/namespace.yaml
+kubectl apply -f ./kube-logging/fluentbit.yaml
 kubectl rollout status daemonset/fluent-bit -n kube-logging
 
 echo "------------------------------------------------------------------------"
