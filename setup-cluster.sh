@@ -9,13 +9,18 @@ kind create cluster --name k8s-logs \
 
 kubectl cluster-info --context kind-k8s-logs
 
+echo "------------------------------------------------------------------------"
+echo "Setup nginx ingress controller"
+echo "------------------------------------------------------------------------"
+
 kubectl apply -f \
   https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+
 
 kubectl wait --namespace ingress-nginx \
   --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller \
-  --timeout=90s
+  --timeout=300s
 
 echo "------------------------------------------------------------------------"
 echo "Setup elk stack"
