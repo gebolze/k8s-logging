@@ -1,41 +1,22 @@
-# Setup the local demonstration cluster
-kind create cluster --name k8s-logs \
-  --config kind-cluster-config.yaml
+# cloud native logging with k8s
 
-kubectl cluster-info --context kind-k8s-logs
+This reposistory demonstrates how you can realize cloud native logging
+(12-factor apps) using the following tools:
+- k8s ochestrator used to host workloads (and optionally logging infrastructure)
+- fluent-bit to collect workload logs (and optionally some log preprocessing)
+- elk as a central store for your logs and access logs
 
-kubectl apply -f \
-  https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+# setup
 
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=90s
+This demo contains all the needed resources to create a local kind cluster. To
+bootstrap the demo it's enough to execute the `setup-cluster.sh` script. When
+the scripts completed the cluster should be up and running, this can be verified
+using eg. `k9s`.
 
-# setup elk stack
-kubectl apply -f elk-logging-ns.yaml
+To access the elk stack you could use kubefwd to create the needed port
+forwardings, eg.: `kubefwd svc -n elk-logging`. Once the forwarding are created,
+you should be able to access kibana at: http://kibana:5601.
 
-kubectl apply -f elk-logging-elasticsearch.yaml
-kubectl rollout status sts/es-cluster --namespace=elk-logging
+# known issues
+- The ingress for kibana is currently broken.
 
-kubectl apply -f elk-logging-kibana.yaml
-kubectl rollout status deployment/kibana --namespace=elk-logging
-
-kubectl apply -f elk-logging-logstash.yaml
-kubectl rollout status deployment/logstash --namespace=elk-logging
-
-kubectl apply -f elk-logging-ingress.yaml
-
-# setup logs collection using fluent-bit
-kubectl apply -f kube-logging-ns.yaml
-kubectl apply -f kube-logging-fluentbit.yaml
-kubectl rollout status daemonset/fluent-bit -n kube-logging
-
-# build and publish demo workload with esc common schema logging
-cd demo-web
-docker build . -t gebolze/demo-webapp
-docker push gebolze/demo-webapp
-cd ..
-
-# deploy demo workload
-kubectl apply -f demo-webapp.yaml
