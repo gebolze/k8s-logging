@@ -1,7 +1,13 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ecs
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-webapp
+  namespace: ecs
 spec:
   replicas: 2
   selector:

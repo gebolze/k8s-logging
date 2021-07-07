@@ -60,4 +60,10 @@ echo "------------------------------------------------------------------------"
 echo "deploy demo workload"
 echo "------------------------------------------------------------------------"
 
-kubectl apply -f demo-webapp.yaml
+kubectl apply -f demo-webapp-ecs.yaml
+kubectl apply -f demo-webapp-json.yaml
+kubectl apply -f demo-webapp-text.yaml
+
+kubectl rollout status deployment/demo-webapp -n ecs
+kubectl rollout status deployment/demo-webapp -n json
+kubectl rollout status deployment/demo-webapp -n text
